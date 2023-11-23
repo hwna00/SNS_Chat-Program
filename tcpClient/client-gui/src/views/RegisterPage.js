@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   VStack,
   Input,
@@ -8,9 +9,11 @@ import {
   useDisclosure,
   Collapse,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useSocket } from "../hooks";
 
 const RegisterPage = () => {
+  const socket = useSocket();
+
   const [domainName, setDomainName] = useState("");
   const [ipAddress, setIpAddress] = useState("");
   const [hexAddress, setHexAddress] = useState("");
@@ -27,13 +30,9 @@ const RegisterPage = () => {
   };
 
   const convertDomainNameToAddress = () => {
-    console.log(domainName);
-
     if (domainName !== "") {
-      onOpen();
-      // TODO: 서버로부터 받아온 값으로 대체해야 한다.
-      setIpAddress("test");
-      setHexAddress(new Date());
+      console.log("emit domain_to_address event to server");
+      socket.emit("domain_to_address", { domainName });
     } else {
       window.alert("도메인 주소를 입력해주세요");
     }
@@ -46,6 +45,19 @@ const RegisterPage = () => {
     console.log("hexAddress", hexAddress);
     console.log("nickname", nickname);
   };
+
+  useEffect(() => {
+    if (!socket) {
+      return;
+    }
+
+    socket.on("domain_to_address", (payload) => {
+      const { ip, hex } = payload;
+      onOpen();
+      setIpAddress(ip);
+      setHexAddress(hex);
+    });
+  }, [onOpen, socket]);
 
   return (
     <VStack as="form" gap="6" onSubmit={handleSubmit}>

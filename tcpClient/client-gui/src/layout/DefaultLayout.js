@@ -1,7 +1,21 @@
-import { Container, HStack, Heading, VStack } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
+
 import { Outlet } from "react-router-dom";
+import { Container, HStack, Heading, VStack } from "@chakra-ui/react";
+import { io } from "socket.io-client";
+
+import SocketContext from "../components/SocketContext";
 
 const DefaultLayout = () => {
+  const [socket, setSocket] = useState(null);
+
+  useEffect(() => {
+    const webSocket = io("");
+    setSocket(webSocket);
+
+    return () => webSocket.close();
+  }, []);
+
   return (
     <VStack width="100vw" height="100vh">
       <HStack width="full" padding="4" boxShadow="base">
@@ -14,7 +28,9 @@ const DefaultLayout = () => {
         </Heading>
       </HStack>
       <Container mt="8">
-        <Outlet />
+        <SocketContext.Provider value={socket}>
+          <Outlet />
+        </SocketContext.Provider>
       </Container>
     </VStack>
   );
