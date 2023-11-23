@@ -13,7 +13,7 @@ const DefaultLayout = () => {
           SNS TALK
         </Heading>
       </HStack>
-      <Container>
+      <Container mt="8">
         <Outlet />
       </Container>
     </VStack>

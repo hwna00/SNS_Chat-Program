@@ -1,5 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import DefaultLayout from "./layout/DefaultLayout";
+import RegisterPage from "./views/RegisterPage";
 
 const router = createBrowserRouter([
   {
@@ -8,7 +9,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: "",
-        element: "",
+        element: <RegisterPage />,
       },
     ],
   },
