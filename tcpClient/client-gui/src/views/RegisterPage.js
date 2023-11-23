@@ -5,6 +5,8 @@ import {
   FormLabel,
   Button,
   HStack,
+  useDisclosure,
+  Collapse,
 } from "@chakra-ui/react";
 import { useState } from "react";
 
@@ -13,6 +15,8 @@ const RegisterPage = () => {
   const [ipAddress, setIpAddress] = useState("");
   const [hexAddress, setHexAddress] = useState("");
   const [nickname, setNickName] = useState("");
+
+  const { isOpen, onOpen } = useDisclosure();
 
   const handleNicknameChange = (event) => {
     setNickName(event.target.value);
@@ -24,6 +28,15 @@ const RegisterPage = () => {
 
   const convertDomainNameToAddress = () => {
     console.log(domainName);
+
+    if (domainName !== "") {
+      onOpen();
+      // TODO: 서버로부터 받아온 값으로 대체해야 한다.
+      setIpAddress("test");
+      setHexAddress(new Date());
+    } else {
+      window.alert("도메인 주소를 입력해주세요");
+    }
   };
 
   const handleSubmit = (event) => {
@@ -39,6 +52,7 @@ const RegisterPage = () => {
       <FormControl>
         <FormLabel>Server Domain Name</FormLabel>
         <HStack>
+          {/* // TODO: 입력 형식을 지정해야 한다. */}
           <Input
             required
             placeholder="연결하고자 하는 서버의 도메인 주소를 입력하세요"
@@ -51,10 +65,12 @@ const RegisterPage = () => {
         </HStack>
       </FormControl>
 
-      <VStack width="full" gap="4">
-        <Input readOnly value={ipAddress} />
-        <Input readOnly value={hexAddress} />
-      </VStack>
+      <Collapse style={{ width: "100%" }} in={isOpen} animateOpacity>
+        <VStack width="full" gap="4">
+          <Input readOnly value={ipAddress} />
+          <Input readOnly value={hexAddress} />
+        </VStack>
+      </Collapse>
 
       <FormControl>
         <FormLabel>Nickname</FormLabel>
@@ -65,7 +81,6 @@ const RegisterPage = () => {
           onChange={handleNicknameChange}
         />
       </FormControl>
-
       <Button type="submit" width="full" colorScheme="blue" mt="8">
         연결하기
       </Button>
