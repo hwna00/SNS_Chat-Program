@@ -78,11 +78,13 @@ const RegisterPage = () => {
     socket.on("create_connection", (payload) => {
       if (payload.result) {
         setIsConnected(true);
+        window.localStorage.setItem("nickname", nickname);
+        window.localStorage.setItem("domainName", domainName);
       } else {
         alert(payload.msg);
       }
     });
-  }, [onOpen, socket]);
+  }, [onOpen, socket, nickname, domainName]);
 
   return (
     <VStack
