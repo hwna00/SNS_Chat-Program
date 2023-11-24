@@ -40,10 +40,9 @@ const RegisterPage = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log("domainName", domainName);
-    console.log("ipAddress", ipAddress);
-    console.log("hexAddress", hexAddress);
-    console.log("nickname", nickname);
+
+    console.log("emit create_connection event to server");
+    socket.emit("create_connection", { domainName, nickname });
   };
 
   useEffect(() => {
@@ -57,6 +56,25 @@ const RegisterPage = () => {
       setIpAddress(ip);
       setHexAddress(hex);
     });
+
+    socket.on("handshake_request", (payload) => {
+      // TODO: handshake 내용 시각화 하기
+      console.log(payload);
+    });
+
+    socket.on("handshake_response", (payload) => {
+      // TODO: handshake 내용 시각화 하기
+      console.log(payload);
+    });
+
+    socket.on("create_connection", (payload) => {
+      // TODO: 1초 정도 delay 걸어야 할 지도..?
+      if (payload.result) {
+        // TODO: 메인 화면으로 이동
+      } else {
+        alert(payload.msg);
+      }
+    });
   }, [onOpen, socket]);
 
   return (
@@ -64,7 +82,7 @@ const RegisterPage = () => {
       <FormControl>
         <FormLabel>Server Domain Name</FormLabel>
         <HStack>
-          {/* // TODO: 입력 형식을 지정해야 한다. */}
+          {/* // TODO: 입력 형식을 지정해야 한다. (도메인과 포트번호 분리하기) */}
           <Input
             required
             placeholder="연결하고자 하는 서버의 도메인 주소를 입력하세요"
@@ -93,6 +111,7 @@ const RegisterPage = () => {
           onChange={handleNicknameChange}
         />
       </FormControl>
+
       <Button type="submit" width="full" colorScheme="blue" mt="8">
         연결하기
       </Button>
