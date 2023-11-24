@@ -52,7 +52,9 @@ describe("Main Page", () => {
 
   it("채팅방 목록이 실시간으로 업데이트 되는가?", async () => {
     mockOn.mockImplementation((event, callback) => {
-      if (event === "new_msg") {
+      if (event === "chat_rooms") {
+        callback(mockChatRooms);
+      } else if (event === "new_msg") {
         callback(mockNewChat);
       }
     });
