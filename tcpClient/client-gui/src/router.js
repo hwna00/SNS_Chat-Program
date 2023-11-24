@@ -8,7 +8,7 @@ const router = createBrowserRouter([
     element: <DefaultLayout />,
     children: [
       {
-        path: "",
+        path: "enter-page",
         element: <RegisterPage />,
       },
     ],
