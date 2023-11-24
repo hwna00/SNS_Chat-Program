@@ -17,13 +17,7 @@ const MainPage = () => {
 
   const [nickname, setNickname] = useState("");
   const [serverDomainName, setserverDomainName] = useState("");
-  const [chatRooms, setChatRooms] = useState([
-    {
-      roomName: "홍철범",
-      msgPreview: "나 하닌데..",
-      participants: 3,
-    },
-  ]);
+  const [chatRooms, setChatRooms] = useState([]);
 
   const handleDisconnect = () => {
     socket.emit("destroy_connection");
@@ -38,8 +32,6 @@ const MainPage = () => {
     if (!window.localStorage.getItem("nickname")) {
       navigate("/enter-page");
     }
-
-    console.log(window.localStorage.getItem("nickname"));
 
     setNickname(window.localStorage.getItem("nickname"));
     setserverDomainName(window.localStorage.getItem("domainName"));
