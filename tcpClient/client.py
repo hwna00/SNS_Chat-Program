@@ -29,8 +29,8 @@ while True:
 client_socket.close()
 
 
-clientSocket = Flask(__name__)        #플라스크 객체 생성
-socketio = SocketIO(clientSocket, cors_allowed_origins="*")
+app = Flask(__name__)        #플라스크 객체 생성
+socketio = SocketIO(app, cors_allowed_origins="*")
 
 @socketio.on('domain_to_address')
 def handle_domain_to_address(data):
@@ -62,4 +62,4 @@ def handle_send_msg(data):
     #????
 
 if __name__==  "__main__":
-    socketio.run(clientSocket)
+    socketio.run(app)
