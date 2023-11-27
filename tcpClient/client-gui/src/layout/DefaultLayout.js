@@ -17,7 +17,7 @@ const DefaultLayout = () => {
   }, []);
 
   return (
-    <VStack width="100vw" height="100vh">
+    <VStack width="100vw" height="100vh" gap="4">
       <HStack width="full" padding="4" boxShadow="base">
         <Heading
           as="h1"
@@ -27,7 +27,7 @@ const DefaultLayout = () => {
           SNS TALK
         </Heading>
       </HStack>
-      <Container mt="8">
+      <Container maxW="container.lg" height="full" py="4">
         <SocketContext.Provider value={socket}>
           <Outlet />
         </SocketContext.Provider>
