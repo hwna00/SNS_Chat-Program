@@ -27,47 +27,66 @@ describe("Chatting Page", () => {
     render(<ChatRoom />);
 
     await waitFor(() => {
-      expect(
-        screen.getByText("새로운 참여자가 입장했습니다.")
-      ).toBeIntheDocument();
+      const welcomeMessages =
+        screen.getAllByText(/새로운 참여자가 입장했습니다\./);
+      expect(welcomeMessages.length).toBeGreaterThan(0);
     });
   });
 
   it("내가 전송한 메시지가 바이트로 변환된 결과를 확인할 수 있는가", async () => {
     mockOn.mockImplementation((event, callback) => {
       if (event === "msg_to_byte") {
-        callback({ byte: "pure byte", orderedByte: " ordered byte" });
+        callback({ byte: "pure byte", orderedByte: "ordered byte" });
       }
     });
 
     render(<ChatRoom />);
 
     await waitFor(() => {
-      expect(screen.getByText("pure byte")).toBeIntheDocument();
+      expect(screen.getByDisplayValue("pure byte")).toBeInTheDocument();
     });
 
     await waitFor(() => {
-      expect(screen.getByText("ordered byte")).toBeIntheDocument();
+      expect(screen.getByDisplayValue("ordered byte")).toBeInTheDocument();
     });
   });
 
   it("채팅방 이용자가 보낸 메시지의 작성자를 구분하여 화면에 표기하는가", async () => {
+    Storage.prototype.getItem = jest.fn();
+    Storage.prototype.getItem.mockReturnValue("홍세원");
+
+    const messages = [
+      { sender: "홍세원", msg: "포항항" },
+      { sender: "User2", msg: "Hi there" },
+      { sender: "User3", msg: "How are you?" },
+    ];
+
     mockOn.mockImplementation((event, callback) => {
       if (event === "recv_msg") {
-        callback({ sender: "홍길동", roomName: "홍철범", msg: "반갑수당" });
+        messages.forEach((message) => {
+          setTimeout(() => callback(message), 100);
+        });
       }
     });
 
     render(<ChatRoom />);
 
-    // TODO: 사용자를 구분하는 지 확인할 필요가 있음
-
     await waitFor(() => {
-      expect(screen.getByText("홍길동")).toBeIntheDocument();
+      const opposites = screen.getAllByText("User2");
+      expect(opposites[0]).toBeInTheDocument();
+    });
+    await waitFor(() => {
+      const opposites = screen.getAllByText("User3");
+      expect(opposites[0]).toBeInTheDocument();
     });
 
     await waitFor(() => {
-      expect(screen.getByText("반갑수당")).toBeIntheDocument();
+      const myName = screen.queryByText("홍세원");
+      expect(myName).not.toBeInTheDocument();
+    });
+
+    await waitFor(() => {
+      expect(screen.getAllByText("포항항")[0]).toBeInTheDocument();
     });
   });
 });
