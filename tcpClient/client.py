@@ -40,4 +40,3 @@ if __name__ == "__main__":
         if data == "quit":
             client_socket.close(); break
         client_socket.send(data.encode())
-    
