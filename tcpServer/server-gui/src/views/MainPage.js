@@ -94,17 +94,17 @@ const MainPage = () => {
           {selectedClient && (
             <Box
               position="absolute"
-              width="80%"
+              width="50%"
               height="80%"
               top="10%"
-              left="10%"
+              left="25%"
               as={motion.div}
               layoutId={selectedClient.nickname}
               padding="4"
               bgColor="gray.100"
               borderRadius="md"
             >
-              <Heading as="h1" fontSize="2xl">
+              <Heading as="h1" fontSize="2xl" mb="8">
                 {selectedClient.nickname}({selectedClient.socketAddr})
               </Heading>
               {messages
@@ -112,7 +112,14 @@ const MainPage = () => {
                   return msg.sender === selectedClient.nickname;
                 })
                 .map((msg, index) => (
-                  <VStack as="li" key={index} padding="4" bgColor="gray.100">
+                  <VStack
+                    as="li"
+                    key={index}
+                    padding="4"
+                    bgColor="blue.100"
+                    mt="4"
+                    alignItems="flex-start"
+                  >
                     <Text>보낸 사람: {msg.sender}</Text>
                     <Text>채팅방: {msg.target}</Text>
                     <Text>받은 바이트: {msg.byte}</Text>
@@ -141,9 +148,17 @@ const MainPage = () => {
         height="full"
         bgColor="gray.100"
         overflowY="scroll"
+        spacing="4"
+        padding="4"
       >
         {messages?.map((msg, index) => (
-          <VStack as="li" key={index} padding="4" bgColor="blue.100">
+          <VStack
+            as="li"
+            key={index}
+            padding="4"
+            bgColor="blue.100"
+            alignItems="flex-start"
+          >
             <Text>보낸 사람: {msg.sender}</Text>
             <Text>채팅방: {msg.target}</Text>
             <Text>받은 바이트: {msg.byte}</Text>
