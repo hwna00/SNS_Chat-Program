@@ -3,6 +3,7 @@ from socket import *
 from threading import Lock, Thread
 from flask import Flask
 from flask_socketio import SocketIO, emit
+import json
 
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -61,13 +62,22 @@ def send(client_socket, addr, data):
 @socketio.on('domain_to_address')
 def handle_domain_to_address(data):
     # 전송 데이터 예시: { 'domainName': 'localhost:3000'}
-    domainName = data['domainName']
-
-@socketio.on('create_connection')
-def handle_create_connection(data):
-    # 전송 데이터 예시: { 'nickname': '홍길동', 'domainName': 'localhost:3000' }
-    nickname = data['nickname']
     domainName_port = data['domainName']
+    domainlist = domainName_port.split(':')
+    domainName = domainlist[0]
+    # 포트번호 정수 변환
+    port = int(domainlist[1])
+    ip_address = gethostbyname(domainName)
+    print(ip_address, port)
+    binary_ip = inet_pton(AF_INET, ip_address)
+    socketio.emit("domain_to_address",{"domainName":binary_ip})
+
+@socketio.on('create_connection') 
+def handle_create_connection(data):
+    # 전송 데이터 예시: { "nickname": "홍길동", "domainName": "localhost:3000" }
+    data_dict = json.loads(data)
+    nickname = data_dict['nickname']
+    domainName_port = data_dict['domainName']
     domainlist = domainName_port.split(':')
     domainName = domainlist[0]
     # 포트번호 정수 변환
@@ -88,7 +98,8 @@ def handle_create_connection(data):
 
 @socketio.on('send_msg')
 def handle_send_msg(data):
-    # 전송 데이터 예시: { 'sender': '홍길동', 'roomName': '홍철범', msg: '반갑수당' }
+    # 전송 데이터 예시: { "sender": "홍길동", "roomName": "홍철범", "msg": "반갑수당"}
+    data = json.loads(data)
     sender = data['sender']
     roomName = data['roomName']
     print(sender, roomName)
@@ -118,4 +129,4 @@ def handle_send_msg(data):
 
 if __name__ == "__main__":
 
-    socketio.run(app, debug=True)
+    socketio.run(app, port = 5001,debug=True)
