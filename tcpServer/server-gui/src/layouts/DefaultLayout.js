@@ -27,7 +27,7 @@ const DefaultLayout = () => {
           SNS TALK - Server
         </Heading>
       </HStack>
-      <Container maxW="container.md" my="8" height="full">
+      <Container maxW="container.md" my="8" height="full" overflow="hidden">
         <SocketContext.Provider value={socket}>
           <Outlet />
         </SocketContext.Provider>
