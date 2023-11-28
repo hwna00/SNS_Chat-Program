@@ -1,9 +1,7 @@
 import "@testing-library/jest-dom";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { MemoryRouter } from "react-router-dom";
 
 import { useSocket } from "../hooks";
-import RegisterPage from "../views/RegisterPage";
 import MainPage from "../views/MainPage";
 
 jest.mock("../hooks");
@@ -30,7 +28,7 @@ describe("Main Page", () => {
 
     render(<MainPage />);
 
-    expect(screen.getByText("localshot:3000")).toBeInTheDocument();
+    expect(screen.getByText("localhost:3000")).toBeInTheDocument();
   });
 
   it("현재 서버에 연결된 소켓의 개수를 확인할 수 있는가", async () => {
@@ -43,11 +41,7 @@ describe("Main Page", () => {
     render(<MainPage />);
 
     await waitFor(() => {
-      expect(screen.getByText(/8/)).toBeInTheDocument();
-    });
-
-    await waitFor(() => {
-      expect(screen.getByText(/3/)).toBeInTheDocument();
+      expect(screen.getByText(/3\/8/)).toBeInTheDocument();
     });
   });
 
@@ -81,37 +75,33 @@ describe("Main Page", () => {
   it("전체 데이터 전송 내역을 확인할 수 있는가", async () => {
     mockOn.mockImplementation((event, callback) => {
       if (event === "msgs") {
-        callback([
-          {
-            sender: "하철환",
-            msg: "반갑수당",
-            byte: "byte",
-            orderedByte: "orderedByte",
-            target: "홍철범",
-          },
-        ]);
+        callback({
+          sender: "하철환",
+          msg: "반갑수당",
+          byte: "byte",
+          orderedByte: "orderedByte",
+          target: "홍철범",
+        });
       }
     });
 
     render(<MainPage />);
 
     await waitFor(() => {
-      expect(screen.getByText("하철환")).toBeInTheDocument();
+      expect(screen.getByText(/하철환/)).toBeInTheDocument();
     });
   });
 
   it("특정 소켓의 데이터 전송 내역을 확인할 수 있는가", async () => {
     mockOn.mockImplementation((event, callback) => {
       if (event === "msgs") {
-        callback([
-          {
-            sender: "하철환",
-            msg: "반갑수당",
-            byte: "byte",
-            orderedByte: "orderedByte",
-            target: "홍철범",
-          },
-        ]);
+        callback({
+          sender: "하철환",
+          msg: "반갑수당",
+          byte: "byte",
+          orderedByte: "orderedByte",
+          target: "홍철범",
+        });
       } else if (event === "clients") {
         callback([
           {
@@ -124,10 +114,10 @@ describe("Main Page", () => {
 
     render(<MainPage />);
 
-    fireEvent.click(screen.getAllByText("하철환")[0]);
+    fireEvent.click(screen.getByText("localhost:54732"));
 
     await waitFor(() => {
-      expect(screen.getByText("반갑수당")).toBeInTheDocument();
+      expect(screen.getByText(/반갑수당/)).toBeInTheDocument();
     });
 
     await waitFor(() => {
