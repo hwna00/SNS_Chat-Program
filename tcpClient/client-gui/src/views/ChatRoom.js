@@ -100,6 +100,8 @@ const ChatRoom = () => {
       return;
     }
 
+    socket.emit("welcome", roomName);
+
     socket.on("welcome", () => {
       setChats((prev) => [...prev, "welcome"]);
     });
@@ -113,7 +115,7 @@ const ChatRoom = () => {
       console.log(payload);
       setChats((prev) => [...prev, payload]);
     });
-  }, [socket, nickname]);
+  }, [socket, nickname, roomName]);
 
   return (
     <HStack height="full" alignItems="flex-start">

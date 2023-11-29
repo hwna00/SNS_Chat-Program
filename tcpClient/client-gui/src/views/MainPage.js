@@ -41,7 +41,7 @@ const MainPage = () => {
     socket.on("chat_rooms", (payload) => {
       setChatRooms(payload);
     });
-    socket.on("new_msg", (payload) => {
+    socket.on("recv_msg", (payload) => {
       setChatRooms((prev) => {
         return prev.map((room) => {
           if (room.roomName === payload.targetRoom) {
