@@ -24,24 +24,33 @@ const MainPage = () => {
 
   useEffect(() => {
     setServerDomain(window.localStorage.getItem("domainName"));
+  }, []);
 
+  useEffect(() => {
     if (!socket) {
       return;
     }
-
-    socket.emit("client_connected");
 
     socket.on("conn_info", (payload) => {
       setSocketConn(payload);
     });
 
+    socket.emit("client_connected");
+
     socket.on("clients", (payload) => {
+      console.log("clients: ", payload);
       setSocketClients(payload);
     });
 
-    socket.on("msgs", (payload) => {
+    socket.on("new_msg", (payload) => {
       setMessages((prev) => [...prev, payload]);
     });
+
+    return () => {
+      socket.off("conn_info");
+      socket.off("clients");
+      socket.off("new_msg");
+    };
   }, [socket]);
 
   return (
