@@ -11,7 +11,7 @@ socketio = SocketIO(app)
 # 전역 변수로 소켓을 저장할 리스트 생성
 client_sockets = []
 lock = Lock()
-
+ 
 def connect(addr):
     client_socket = socket(AF_INET, SOCK_STREAM)
     try:
