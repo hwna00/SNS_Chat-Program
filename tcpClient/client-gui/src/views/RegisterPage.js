@@ -75,7 +75,7 @@ const RegisterPage = () => {
       setRes(payload.msg);
     });
 
-    socket.on("create_connection", (payload) => {
+    socket.on("make_connection", (payload) => {
       if (payload.result) {
         setIsConnected(true);
         window.localStorage.setItem("nickname", nickname);
@@ -99,7 +99,6 @@ const RegisterPage = () => {
           <FormControl>
             <FormLabel>Server Domain Name</FormLabel>
             <HStack>
-              {/* // TODO: 입력 형식을 지정해야 한다. (도메인과 포트번호 분리하기) */}
               <Input
                 required
                 placeholder="연결하고자 하는 서버의 도메인 주소를 입력하세요"
