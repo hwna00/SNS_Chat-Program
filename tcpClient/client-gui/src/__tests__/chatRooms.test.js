@@ -9,6 +9,7 @@ jest.mock("../hooks");
 describe("Main Page", () => {
   const mockEmit = jest.fn();
   const mockOn = jest.fn();
+  const mockOff = jest.fn();
 
   const mockChatRooms = [
     {
@@ -25,7 +26,7 @@ describe("Main Page", () => {
   };
 
   beforeEach(() => {
-    useSocket.mockReturnValue({ emit: mockEmit, on: mockOn });
+    useSocket.mockReturnValue({ emit: mockEmit, on: mockOn, off: mockOff });
   });
 
   it("현재 서버에 개설되어 있는 채팅방 목록을 잘 가져오는가?", async () => {
@@ -54,7 +55,7 @@ describe("Main Page", () => {
     mockOn.mockImplementation((event, callback) => {
       if (event === "chat_rooms") {
         callback(mockChatRooms);
-      } else if (event === "recv_msg") {
+      } else if (event === "new_msg") {
         callback(mockNewChat);
       }
     });

@@ -9,11 +9,12 @@ jest.mock("../hooks");
 describe("Main Page", () => {
   const mockEmit = jest.fn();
   const mockOn = jest.fn();
+  const mockOff = jest.fn();
 
   beforeEach(() => {
     window.alert = jest.fn();
 
-    useSocket.mockReturnValue({ emit: mockEmit, on: mockOn });
+    useSocket.mockReturnValue({ emit: mockEmit, on: mockOn, off: mockOff });
   });
 
   afterEach(() => {
@@ -74,7 +75,7 @@ describe("Main Page", () => {
 
   it("전체 데이터 전송 내역을 확인할 수 있는가", async () => {
     mockOn.mockImplementation((event, callback) => {
-      if (event === "msgs") {
+      if (event === "new_msg") {
         callback({
           sender: "하철환",
           msg: "반갑수당",
@@ -94,7 +95,7 @@ describe("Main Page", () => {
 
   it("특정 소켓의 데이터 전송 내역을 확인할 수 있는가", async () => {
     mockOn.mockImplementation((event, callback) => {
-      if (event === "msgs") {
+      if (event === "new_msg") {
         callback({
           sender: "하철환",
           msg: "반갑수당",
