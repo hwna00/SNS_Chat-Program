@@ -54,7 +54,7 @@ describe("Main Page", () => {
     mockOn.mockImplementation((event, callback) => {
       if (event === "chat_rooms") {
         callback(mockChatRooms);
-      } else if (event === "new_msg") {
+      } else if (event === "recv_msg") {
         callback(mockNewChat);
       }
     });
