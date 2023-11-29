@@ -76,12 +76,6 @@ const ChatRoom = () => {
   };
 
   const handleMsg = () => {
-    console.log({
-      sender: nickname,
-      roomName,
-      msg: userMsg,
-    });
-
     if (userMsg !== "") {
       socket.emit("send_msg", {
         sender: nickname,
@@ -96,13 +90,14 @@ const ChatRoom = () => {
   useEffect(() => {
     setNickname(window.localStorage.getItem("nickname"));
 
-    if (!socket) {
-      return;
-    }
-
+    // TODO: room을 도입하여 채팅방을 나누어야 함
+    console.log("emit welcome");
     socket.emit("welcome", roomName);
+  }, [socket, roomName]);
 
+  useEffect(() => {
     socket.on("welcome", () => {
+      console.log("welcome");
       setChats((prev) => [...prev, "welcome"]);
     });
 
@@ -112,9 +107,15 @@ const ChatRoom = () => {
     });
 
     socket.on("recv_msg", (payload) => {
-      console.log(payload);
+      console.log("recv msg: ", payload);
       setChats((prev) => [...prev, payload]);
     });
+
+    return () => {
+      socket.off("welcome");
+      socket.off("msg_to_byte");
+      socket.off("recv_msg");
+    };
   }, [socket, nickname, roomName]);
 
   return (

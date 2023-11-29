@@ -10,8 +10,12 @@ const DefaultLayout = () => {
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    const webSocket = io("");
+    const webSocket = io("http://localhost:8001");
     setSocket(webSocket);
+
+    webSocket.on("error", (payload) => {
+      window.alert(payload);
+    });
 
     return () => webSocket.close();
   }, []);

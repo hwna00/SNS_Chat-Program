@@ -59,6 +59,7 @@ const RegisterPage = () => {
     }
 
     socket.on("domain_to_address", (payload) => {
+      console.log("domain_to_address", payload);
       const { ip, hex } = payload;
       onOpen();
       setIpAddress(ip);
