@@ -180,7 +180,7 @@ def handle_chat_rooms():
 # TODO: welcome 이벤트 처리하기
 @socketio.on("welcome")
 def handle_welcome(roomName):
-    join_room(roomName)
+    join_room(roomName)  # TODO: 채팅방 기능이 완성되면 socketIO의 Room 기능은 사용하지 않아도 됨
     emit("welcome", to=roomName)
 
 
