@@ -29,6 +29,8 @@ const MainPage = () => {
       return;
     }
 
+    socket.emit("client_connected");
+
     socket.on("conn_info", (payload) => {
       setSocketConn(payload);
     });
