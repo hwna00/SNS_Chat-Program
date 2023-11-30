@@ -1,7 +1,7 @@
 from socket import *
 from threading import *
 
-class client_tcp():
+class Client_tcp():
     def __init__(self, ip="127.0.0.1", port="9000", timeout=2000):
         self.ip = ip
         self.port = int(port)
@@ -60,7 +60,7 @@ class client_tcp():
         self.thread.join()
                     
 if __name__ == "__main__":
-    client = client_tcp("127.0.0.1", "3000")
+    client = Client_tcp("127.0.0.1", "3000")
     client.start_client_tcp()
 
     while True:
