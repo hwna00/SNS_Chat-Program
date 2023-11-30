@@ -60,7 +60,7 @@ class client_tcp():
         self.thread.join()
                     
 if __name__ == "__main__":
-    client = client_tcp()
+    client = client_tcp("127.0.0.1", "3000")
     client.start_client_tcp()
 
     while True:

@@ -1,7 +1,7 @@
 from socket import *
 from threading import *
 
-class server_tcp():
+class Server_tcp():
     def __init__(self, ip="127.0.0.1", port="9000", max_connection=5):
         self.ip = ip
         self.port = int(port)
@@ -68,10 +68,8 @@ class server_tcp():
         server_thread.start()
 
 if __name__ == "__main__":
-    server = server_tcp()
-    server_thread = Thread(target=server.start_tcp_server, args=())
-    server_thread.start()
-
+    server = Server_tcp()
+    server.start_tcp_server()
     while True:
         n = input()
         if n == "quit": server.stop_server_tcp(); break
