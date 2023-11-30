@@ -31,6 +31,7 @@ const RegisterPage = () => {
     }
 
     setIsConverting(true);
+    console.log("emit: domain to address");
     socket.emit("domain_to_address");
   };
 
@@ -45,6 +46,7 @@ const RegisterPage = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     setIsConnecting(true);
+    console.log("emit: create server", { domainName, maxConn });
     socket.emit("create_server", { domainName, maxConn });
   };
 

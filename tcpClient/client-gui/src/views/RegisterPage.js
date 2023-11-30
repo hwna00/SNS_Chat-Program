@@ -59,6 +59,7 @@ const RegisterPage = () => {
     }
 
     socket.on("domain_to_address", (payload) => {
+      console.log("domain_to_address", payload);
       const { ip, hex } = payload;
       onOpen();
       setIpAddress(ip);
@@ -80,8 +81,6 @@ const RegisterPage = () => {
         setIsConnected(true);
         window.localStorage.setItem("nickname", nickname);
         window.localStorage.setItem("domainName", domainName);
-      } else {
-        alert(payload.msg);
       }
     });
   }, [onOpen, socket, nickname, domainName]);
