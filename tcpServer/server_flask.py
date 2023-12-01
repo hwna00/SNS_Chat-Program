@@ -15,6 +15,13 @@ class Server_flask(Server_tcp):
     # { "sender": "하철환", "msg": "반갑수당", "byte": "byte", "orderedByte": "orderedByte", "target": "홍철범"}
     def client_thread(self, client_socket, client_addr):
         try:
+            emit(
+                "conn_info",
+                {
+                    "maxConn": str(self.socket.max_connection),
+                    "currConn": str(len(self.socket.client_list)),
+                },
+            )
             while True:
                 data = client_socket.recv(65535)
                 if not data:
@@ -99,6 +106,7 @@ def handle_client_connected():
             "currConn": str(len(server_socket.client_list)),
         },
     )
+    emit("clients", {}) # username, socketaddr cannot be loaded from server
 
 
 if __name__ == "__main__":
