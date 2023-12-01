@@ -18,8 +18,9 @@ class Server_flask(Server_tcp):
             socketio.emit(
                 "conn_info",
                 {
-                    "maxConn": str(self.socket.max_connection),
-                    "currConn": str(len(self.socket.client_list)),
+                    "maxConn": str(self.max_connection),
+                    "currConn": str(len(self.client_list)),
+                    "connectList": str(self.client_list), # 연결 시, self.client_list 반환 (연결된 클라이언트 수)
                 },
             )
             while True:
@@ -49,6 +50,15 @@ class Server_flask(Server_tcp):
         except ConnectionAbortedError as e:
             print(f"{client_addr[0]}:{client_addr[1]} : Disconnected by User")
             emit("error", "ConnectionAbortedError")
+        finally:
+            socketio.emit(
+                "conn_info",
+                {
+                    "maxConn": str(self.max_connection),
+                    "currConn": str(len(self.client_list)),
+                    "connectList": str(self.client_list), # 연결 종료시, self.client_list 반환 (연결된 클라이언트 수)
+                },
+            )
         if client_socket in self.client_list:
             self.client_list.remove(client_socket)
         print(f"{client_addr[0]}:{client_addr[1]} : Disconnected by User")
