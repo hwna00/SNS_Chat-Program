@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSocket } from "../hooks";
 import {
+  Box,
   Button,
   HStack,
   Heading,
@@ -18,6 +19,7 @@ const MainPage = () => {
 
   const [nickname, setNickname] = useState("");
   const [serverDomainName, setserverDomainName] = useState("");
+  const [myAddr, setMyAddr] = useState("");
   const [chatRooms, setChatRooms] = useState([]);
   const [newRoomName, setNewRoomName] = useState("");
 
@@ -48,6 +50,7 @@ const MainPage = () => {
 
     setNickname(window.localStorage.getItem("nickname"));
     setserverDomainName(window.localStorage.getItem("domainName"));
+    setMyAddr(window.localStorage.getItem("myAddr"));
 
     socket.emit("chat_rooms");
 
@@ -75,16 +78,32 @@ const MainPage = () => {
 
   return (
     <HStack alignItems="flex-start" gap="8">
-      <VStack flex="1" alignItems="flex-start">
-        <Heading as="h3" size="lg">
-          Nickname
-        </Heading>
-        <Text>{nickname}</Text>
-        <Heading as="h3" size="lg">
-          Server
-        </Heading>
-        <Text>{serverDomainName}</Text>
-        <Button width="full" colorScheme="red" onClick={handleDisconnect}>
+      <VStack flex="1" alignItems="flex-start" gap="8">
+        <Box>
+          <Heading as="h3" size="lg">
+            My Socket Address
+          </Heading>
+          <Text>{myAddr}</Text>
+        </Box>
+        <Box>
+          <Heading as="h3" size="lg">
+            Server
+          </Heading>
+          <Text>{serverDomainName}</Text>
+        </Box>
+        <Box>
+          <Heading as="h3" size="lg">
+            Nickname
+          </Heading>
+          <Text>{nickname}</Text>
+        </Box>
+
+        <Button
+          width="full"
+          colorScheme="red"
+          onClick={handleDisconnect}
+          mt="8"
+        >
           연결 해제
         </Button>
       </VStack>

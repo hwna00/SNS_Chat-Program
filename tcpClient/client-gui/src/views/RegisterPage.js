@@ -81,6 +81,7 @@ const RegisterPage = () => {
         setIsConnected(true);
         window.localStorage.setItem("nickname", nickname);
         window.localStorage.setItem("domainName", domainName);
+        window.localStorage.setItem("myAddr", payload.clientSockAddr);
       }
     });
   }, [onOpen, socket, nickname, domainName]);

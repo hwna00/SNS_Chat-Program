@@ -18,7 +18,7 @@ const MainPage = () => {
 
   const [serverDomain, setServerDomain] = useState([]);
   const [messages, setMessages] = useState([]);
-  const [socketClients, setSocketClients] = useState([]);
+  const [clientSockAddrs, setClientSockAddrs] = useState([]);
   const [selectedClient, setSelectedClient] = useState(null);
   const [socketConn, setSocketConn] = useState({});
 
@@ -32,6 +32,7 @@ const MainPage = () => {
     }
 
     socket.on("conn_info", (payload) => {
+      console.log(payload);
       setSocketConn(payload);
     });
 
@@ -39,7 +40,7 @@ const MainPage = () => {
 
     socket.on("clients", (payload) => {
       console.log("clients: ", payload);
-      setSocketClients((prev) => [payload, ...prev]);
+      setClientSockAddrs(payload);
     });
 
     socket.on("new_msg", (payload) => {
@@ -81,22 +82,19 @@ const MainPage = () => {
           overflowY="scroll"
           bgColor="gray.100"
         >
-          {socketClients.map((client, index) => (
+          {clientSockAddrs.map((client) => (
             <ListItem
               as={motion.div}
-              layoutId={client.nickname}
+              layoutId={client}
               onClick={() => setSelectedClient(client)}
-              key={index}
+              key={client}
               padding="4"
               borderRadius="sm"
               bgColor="blue.100"
             >
               <HStack>
-                <Text>클라이언트 닉네임:</Text> <Text>{client.nickname}</Text>
-              </HStack>
-              <HStack>
                 <Text>클라이언트 소켓 주소:</Text>
-                <Text>{client.socketAddr}</Text>
+                <Text>{client}</Text>
               </HStack>
             </ListItem>
           ))}
@@ -111,17 +109,17 @@ const MainPage = () => {
               top="10%"
               left="25%"
               as={motion.div}
-              layoutId={selectedClient.nickname}
+              layoutId={selectedClient}
               padding="4"
               bgColor="gray.100"
               borderRadius="md"
             >
               <Heading as="h1" fontSize="2xl" mb="8">
-                {selectedClient.nickname}({selectedClient.socketAddr})
+                {selectedClient}
               </Heading>
               {messages
                 ?.filter((msg) => {
-                  return msg.sender === selectedClient.nickname;
+                  return msg.clientSockAddr === selectedClient;
                 })
                 .map((msg, index) => (
                   <VStack
@@ -131,6 +129,8 @@ const MainPage = () => {
                     bgColor="blue.100"
                     mt="4"
                     alignItems="flex-start"
+                    width="full"
+                    overflowX="scroll"
                   >
                     <Text>보낸 사람: {msg.sender}</Text>
                     <Text>채팅방: {msg.target}</Text>

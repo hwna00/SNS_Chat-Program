@@ -5,6 +5,7 @@ from flask_cors import CORS
 from threading import *
 from socket import gethostbyname, inet_pton, AF_INET
 
+
 app = Flask(__name__)
 CORS(app, resources={r"*": {"origins": "*"}})
 socketio = SocketIO(app, cors_allowed_origins="*")
@@ -20,9 +21,15 @@ class Server_flask(Server_tcp):
                 {
                     "maxConn": str(self.max_connection),
                     "currConn": str(len(self.client_list)),
-                    "connectList": str(self.client_list), # 연결 시, self.client_list 반환 (연결된 클라이언트 수)
                 },
             )
+
+            list = []
+            for client in self.client_list:
+                client_ip = str(client.getpeername()[0])
+                client_port = str(client.getpeername()[1])
+                list.append(f"{client_ip}:{client_port}")
+            socketio.emit("clients", list)
             while True:
                 data = client_socket.recv(65535)
                 if not data:
@@ -39,6 +46,7 @@ class Server_flask(Server_tcp):
                     {
                         "sender": data["sender"],
                         "msg": data["msg"],
+                        "clientSockAddr": data["clientSockAddr"],
                         "byte": str(bytes(data["msg"], "utf-8")),
                         "orderedByte": "orderedByte",
                         "target": data["roomName"],
@@ -56,11 +64,18 @@ class Server_flask(Server_tcp):
                 {
                     "maxConn": str(self.max_connection),
                     "currConn": str(len(self.client_list)),
-                    "connectList": str(self.client_list), # 연결 종료시, self.client_list 반환 (연결된 클라이언트 수)
                 },
             )
+            list = []
+            for client in self.client_list:
+                client_ip = str(client.getpeername()[0])
+                client_port = str(client.getpeername()[1])
+                list.append(f"{client_ip}:{client_port}")
+            socketio.emit("clients", list)
+
         if client_socket in self.client_list:
             self.client_list.remove(client_socket)
+
         print(f"{client_addr[0]}:{client_addr[1]} : Disconnected by User")
         client_socket.close()
 
@@ -116,7 +131,13 @@ def handle_client_connected():
             "currConn": str(len(server_socket.client_list)),
         },
     )
-    emit("clients", {}) # username, socketaddr cannot be loaded from server
+    list = []
+    for client in server_socket.client_list:
+        client_ip = str(client.getpeername()[0])
+        client_port = str(client.getpeername()[1])
+        list.append(f"{client_ip}:{client_port}")
+        socketio.emit("clients", list)
+    emit("clients", list)
 
 
 if __name__ == "__main__":

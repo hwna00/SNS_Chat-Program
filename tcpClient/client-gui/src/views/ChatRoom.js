@@ -68,6 +68,7 @@ const ChatRoom = () => {
 
   const { roomName } = useParams();
   const [nickname, setNickname] = useState("");
+  const [clientSockAddr, setClientSockAddr] = useState([]);
   const [userMsg, setUserMsg] = useState("");
   const [chats, setChats] = useState([]);
   const [byte, setByte] = useState("");
@@ -81,6 +82,7 @@ const ChatRoom = () => {
     if (userMsg !== "") {
       socket.emit("send_msg", {
         sender: nickname,
+        clientSockAddr,
         roomName,
         msg: userMsg,
       });
@@ -91,6 +93,7 @@ const ChatRoom = () => {
 
   useEffect(() => {
     setNickname(window.localStorage.getItem("nickname"));
+    setClientSockAddr(window.localStorage.getItem("myAddr"));
 
     // TODO: room을 도입하여 채팅방을 나누어야 함
     console.log("emit welcome");
