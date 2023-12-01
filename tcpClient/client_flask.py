@@ -9,6 +9,8 @@ app = Flask(__name__)
 CORS(app, resources={r"*": {"origins": "*"}})
 socketio = SocketIO(app, cors_allowed_origins="*")
 
+chat_rooms = []
+
 
 class Client_flask(Client_tcp):
     def connect(self):
@@ -48,8 +50,24 @@ class Client_flask(Client_tcp):
 
 @socketio.on("welcome")
 def handle_welcome(roomName):
-    join_room(roomName)  # TODO: 채팅방 기능이 완성되면 socketIO의 Room 기능은 사용하지 않아도 됨
+    join_room(roomName)
+    for room in chat_rooms:
+        if room["roomName"] == roomName:
+            room["participants"] += 1
+        print(room)
+    emit("chat_rooms", chat_rooms, broadcast=True)
     emit("welcome", to=roomName)
+
+
+@socketio.on("bye")
+def handle_bye(roomName):
+    print("bye")
+    for room in chat_rooms:
+        if room["roomName"] == roomName:
+            room["participants"] -= 1
+
+    emit("chat_rooms", chat_rooms, broadcast=True)
+    emit("bye", to=roomName)
 
 
 @socketio.on("create_connection")
@@ -86,8 +104,6 @@ def handle_send_msg(data):
     global client_socket
     print(data)
 
-    join_room(data["sender"])
-
     emit(
         "new_msg", {"targetRoom": data["roomName"], "msg": data["msg"]}, broadcast=True
     )
@@ -97,7 +113,6 @@ def handle_send_msg(data):
     emit(
         "msg_to_byte",
         {"byte": str(msg_b), "orderedByte": "orderedByte"},  # ! 메시지 변환 필요
-        to=data["sender"],
     )
     emit(
         "recv_msg",
@@ -108,21 +123,19 @@ def handle_send_msg(data):
 
 @socketio.on("chat_rooms")
 def handle_chat_rooms():
-    emit(
-        "chat_rooms",
-        [
-            {
-                "roomName": "홍철범",
-                "msgPreview": "나 하닌데..",
-                "participants": 3,
-            },
-            {
-                "roomName": "왕밤빵",
-                "msgPreview": "나 민진데..",
-                "participants": 4,
-            },
-        ],
+    emit("chat_rooms", chat_rooms)
+
+
+@socketio.on("create_chat_room")
+def handle_create_chat_room(new_room_name):
+    chat_rooms.append(
+        {
+            "roomName": new_room_name,
+            "msgPreview": "",
+            "participants": 0,
+        }
     )
+    emit("chat_rooms", chat_rooms, broadcast=True)
 
 
 @socketio.on("destroy_connection")

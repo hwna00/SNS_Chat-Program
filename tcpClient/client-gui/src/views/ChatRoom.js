@@ -51,11 +51,13 @@ const MyChatBubble = ({ msg }) => {
   );
 };
 
-const WelcomeBubble = () => {
+const NoticeBubble = ({ title }) => {
   return (
     <HStack justifyContent="center">
       <Text borderRadius="md" px="4" py="1" bgColor="gray.300">
-        새로운 참여자가 입장했습니다.
+        {title === "welcome"
+          ? "새로운 참여자가 입장했습니다."
+          : "누군가가 나갔습니다."}
       </Text>
     </HStack>
   );
@@ -93,12 +95,21 @@ const ChatRoom = () => {
     // TODO: room을 도입하여 채팅방을 나누어야 함
     console.log("emit welcome");
     socket.emit("welcome", roomName);
+
+    return () => {
+      socket.emit("bye", roomName);
+    };
   }, [socket, roomName]);
 
   useEffect(() => {
     socket.on("welcome", () => {
       console.log("welcome");
       setChats((prev) => [...prev, "welcome"]);
+    });
+
+    socket.on("bye", () => {
+      console.log("bye");
+      setChats((prev) => [...prev, "bye"]);
     });
 
     socket.on("msg_to_byte", (payload) => {
@@ -114,6 +125,7 @@ const ChatRoom = () => {
 
     return () => {
       socket.off("welcome");
+      socket.off("bye");
       socket.off("msg_to_byte");
       socket.off("recv_msg");
     };
@@ -134,7 +146,7 @@ const ChatRoom = () => {
       >
         {chats.map((chat, index) => {
           if (typeof chat === "string") {
-            return <WelcomeBubble key={index} />;
+            return <NoticeBubble key={index} title={chat} />;
           }
 
           if (chat.sender === nickname) {

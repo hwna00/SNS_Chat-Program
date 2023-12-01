@@ -4,6 +4,7 @@ import {
   Button,
   HStack,
   Heading,
+  Input,
   ListItem,
   Text,
   UnorderedList,
@@ -18,12 +19,22 @@ const MainPage = () => {
   const [nickname, setNickname] = useState("");
   const [serverDomainName, setserverDomainName] = useState("");
   const [chatRooms, setChatRooms] = useState([]);
+  const [newRoomName, setNewRoomName] = useState("");
 
   const handleDisconnect = () => {
     socket.emit("destroy_connection");
     window.localStorage.removeItem("domainName");
     window.localStorage.removeItem("nickname");
     navigate("/enter-page");
+  };
+
+  const handleCreateRoom = () => {
+    console.log("clicked");
+    if (newRoomName === "") {
+      return window.alert("채팅방 이름을 입력하세요");
+    }
+    socket.emit("create_chat_room", newRoomName);
+    setNewRoomName("");
   };
 
   useEffect(() => {
@@ -63,7 +74,7 @@ const MainPage = () => {
   }, [socket, navigate]);
 
   return (
-    <HStack>
+    <HStack alignItems="flex-start" gap="8">
       <VStack flex="1" alignItems="flex-start">
         <Heading as="h3" size="lg">
           Nickname
@@ -78,25 +89,36 @@ const MainPage = () => {
         </Button>
       </VStack>
 
-      <UnorderedList flex="1" listStyleType="none" spacing="4">
-        {chatRooms?.map((room) => (
-          <ListItem
-            key={room.roomName}
-            bgColor="blue.50"
-            padding="4"
-            borderRadius="md"
-            cursor="pointer"
-            onClick={() => {
-              navigate(`rooms/${room.roomName}`);
-            }}
-          >
-            <Text fontWeight="bold">
-              {room.roomName} ({room.participants}명)
-            </Text>
-            <Text textAlign="right">{room.msgPreview}</Text>
-          </ListItem>
-        ))}
-      </UnorderedList>
+      <VStack flex="1">
+        <HStack width="full" mb="8">
+          <Input
+            value={newRoomName}
+            onChange={(e) => setNewRoomName(e.target.value)}
+          />
+          <Button colorScheme="blue" onClick={handleCreateRoom}>
+            채팅방 생성
+          </Button>
+        </HStack>
+        <UnorderedList width="full" listStyleType="none" spacing="4" margin="0">
+          {chatRooms?.map((room) => (
+            <ListItem
+              key={room.roomName}
+              bgColor="blue.50"
+              padding="4"
+              borderRadius="md"
+              cursor="pointer"
+              onClick={() => {
+                navigate(`rooms/${room.roomName}`);
+              }}
+            >
+              <Text fontWeight="bold">
+                {room.roomName} ({room.participants}명)
+              </Text>
+              <Text textAlign="right">{room.msgPreview}</Text>
+            </ListItem>
+          ))}
+        </UnorderedList>
+      </VStack>
     </HStack>
   );
 };
