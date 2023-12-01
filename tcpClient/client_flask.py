@@ -51,18 +51,22 @@ def handle_welcome(roomName):
     emit("welcome", to=roomName)
 
 
-# { "nickname": "홍길동", "domainName": "localhost:3000" }
 @socketio.on("craete_connection")
 def handle_create_connection(data):
     global client_socket
 
-    nickname = data["nickname"]
-    ip = gethostbyname(data["domainName"].split(":")[0])
-    ip_b = inet_pton(AF_INET, ip)
-    port = int(data["domainName"].split(":")[1])
-    client_socket = Client_flask(ip, port)
+    domainName, port = data["domainName"].split(":")
+    ip = gethostbyname(domainName)
+    # nickname = data["nickname"]
+    # ip_b = inet_pton(AF_INET, ip)
+
+    client_socket = Client_flask(ip, int(port))
     client_socket.start_client_tcp()
+
     emit("make_connection", {"result": True})
+
+
+# ! 3-way handshake must be handled
 
 
 @socketio.on("domain_to_address")

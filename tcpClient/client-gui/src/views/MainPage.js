@@ -21,6 +21,8 @@ const MainPage = () => {
 
   const handleDisconnect = () => {
     socket.emit("destroy_connection");
+    window.localStorage.removeItem("domainName");
+    window.localStorage.removeItem("nickname");
     navigate("/enter-page");
   };
 
