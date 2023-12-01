@@ -32,7 +32,7 @@ const RegisterPage = () => {
 
     setIsConverting(true);
     console.log("emit: domain to address");
-    socket.emit("domain_to_address");
+    socket.emit("domain_to_address", { domainName });
   };
 
   const handleDomainNameChange = (event) => {
@@ -58,8 +58,8 @@ const RegisterPage = () => {
     socket.on("domain_to_address", (payload) => {
       setIsConverting(false);
       onOpen();
-      setBtye(payload.byte);
-      setOrderedByte(payload.orderedByte);
+      setBtye(payload.ip);
+      setOrderedByte(payload.hex);
     });
 
     socket.on("create_server", () => {

@@ -39,11 +39,12 @@ const MainPage = () => {
 
     socket.on("clients", (payload) => {
       console.log("clients: ", payload);
-      setSocketClients(payload);
+      setSocketClients((prev) => [payload, ...prev]);
     });
 
     socket.on("new_msg", (payload) => {
-      setMessages((prev) => [...prev, payload]);
+      console.log(payload);
+      setMessages((prev) => [payload, ...prev]);
     });
 
     return () => {
@@ -164,16 +165,19 @@ const MainPage = () => {
       >
         {messages?.map((msg, index) => (
           <VStack
+            width="full"
             as="li"
             key={index}
             padding="4"
             bgColor="blue.100"
             alignItems="flex-start"
+            overflowX="scroll"
           >
             <Text>보낸 사람: {msg.sender}</Text>
             <Text>채팅방: {msg.target}</Text>
             <Text>받은 바이트: {msg.byte}</Text>
             <Text>정렬된 바이트: {msg.orderedByte}</Text>
+            <Text>내용: {msg.msg}</Text>
           </VStack>
         ))}
       </UnorderedList>

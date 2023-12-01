@@ -102,6 +102,7 @@ const ChatRoom = () => {
     });
 
     socket.on("msg_to_byte", (payload) => {
+      console.log("msg to byte", payload);
       setByte(payload.byte);
       setOrderedByte(payload.orderedByte);
     });
