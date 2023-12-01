@@ -85,7 +85,7 @@ def handle_create_connection(data):
     # socketio.start_background_task(target=client_socket.recv)
     client_socket.start_client_tcp()
 
-    emit("make_connection", {"result": True, "domainName": f"{client_socket.get_socket_addr()[0]}:{client_socket.get_socket_addr()[1]}"})
+    emit("make_connection", {"result": True, "clientSockAddr": f"{client_socket.get_socket_addr()[0]}:{client_socket.get_socket_addr()[1]}"})
 
 
 @socketio.on("domain_to_address")
