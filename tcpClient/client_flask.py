@@ -47,6 +47,9 @@ class Client_flask(Client_tcp):
             self.socket.close()
             return
 
+    def get_socket_addr(self):
+        return self.socket.getsockname()
+
 
 @socketio.on("welcome")
 def handle_welcome(roomName):
@@ -73,7 +76,6 @@ def handle_bye(roomName):
 @socketio.on("create_connection")
 def handle_create_connection(data):
     global client_socket
-
     domainName, port = data["domainName"].split(":")
     ip = gethostbyname(domainName)
     # nickname = data["nickname"]
@@ -83,7 +85,7 @@ def handle_create_connection(data):
     # socketio.start_background_task(target=client_socket.recv)
     client_socket.start_client_tcp()
 
-    emit("make_connection", {"result": True})
+    emit("make_connection", {"result": True, "domainName": f"{client_socket.get_socket_addr()[0]}:{client_socket.get_socket_addr()[1]}"})
 
 
 @socketio.on("domain_to_address")
