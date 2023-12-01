@@ -29,9 +29,10 @@ class Client_flask(Client_tcp):
                     print(f"{self.ip}:{self.port} : Disconnected from Server")
                     break
                 if data.decode() == "SYN-ACK":
-                    emit("handshake_request", {"msg": data.decode()})
+                    socketio.emit("handshake_request", {"msg": data.decode()})
                     self.socket.sendall(data)
-                    emit("handshake_response", {"msg": data.decode()})
+
+                    socketio.emit("handshake_response", {"msg": data.decode()})
                 elif data.decode() == "SERVER-CLOSE":
                     self.socket.close()
                 else:
@@ -51,7 +52,7 @@ def handle_welcome(roomName):
     emit("welcome", to=roomName)
 
 
-@socketio.on("craete_connection")
+@socketio.on("create_connection")
 def handle_create_connection(data):
     global client_socket
 
@@ -61,12 +62,10 @@ def handle_create_connection(data):
     # ip_b = inet_pton(AF_INET, ip)
 
     client_socket = Client_flask(ip, int(port))
+    # socketio.start_background_task(target=client_socket.recv)
     client_socket.start_client_tcp()
 
     emit("make_connection", {"result": True})
-
-
-# ! 3-way handshake must be handled
 
 
 @socketio.on("domain_to_address")
@@ -85,15 +84,19 @@ def handle_domain_to_address(data):
 @socketio.on("send_msg")
 def handle_send_msg(data):
     global client_socket
+    print(data)
+
+    join_room(data["sender"])
 
     emit(
         "new_msg", {"targetRoom": data["roomName"], "msg": data["msg"]}, broadcast=True
     )
     client_socket.send(data)
     msg_b = bytes(data["msg"], "utf-8")
+
     emit(
         "msg_to_byte",
-        {"byte": str(msg_b), "orderedByte": "orderedByte"},
+        {"byte": str(msg_b), "orderedByte": "orderedByte"},  # ! 메시지 변환 필요
         to=data["sender"],
     )
     emit(
