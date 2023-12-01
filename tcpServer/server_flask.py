@@ -15,7 +15,7 @@ class Server_flask(Server_tcp):
     # { "sender": "하철환", "msg": "반갑수당", "byte": "byte", "orderedByte": "orderedByte", "target": "홍철범"}
     def client_thread(self, client_socket, client_addr):
         try:
-            emit(
+            socketio.emit(
                 "conn_info",
                 {
                     "maxConn": str(self.socket.max_connection),
