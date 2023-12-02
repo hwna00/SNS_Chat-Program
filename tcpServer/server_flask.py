@@ -10,6 +10,10 @@ app = Flask(__name__)
 CORS(app, resources={r"*": {"origins": "*"}})
 socketio = SocketIO(app, cors_allowed_origins="*")
 
+# Byte Ordering(Little Endian)
+def littleEndian(b):
+    result = ''.join(list(bytes(b, "utf-8"))[::-1])
+
 
 class Server_flask(Server_tcp):
     # ! 아래 형식은 넘어오는 data의 형식이 아닌, 보내야 하는 데이터의 형식
@@ -47,8 +51,8 @@ class Server_flask(Server_tcp):
                         "sender": data["sender"],
                         "msg": data["msg"],
                         "clientSockAddr": data["clientSockAddr"],
-                        "byte": str(bytes(data["msg"], "utf-8")),
-                        "orderedByte": "orderedByte",
+                        "byte": littleEndian(data["msg"]),
+                        "orderedByte": "littleEndian",
                         "target": data["roomName"],
                     },
                 )
