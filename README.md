@@ -16,5 +16,5 @@ https://youtu.be/lSW2EZc6Oag
 | Member | Part |
 | ------ | ---- |
 | 홍세원 |   Flask, SocketIO   |
-| 하철환 |   React, SoektIO   |
+| 하철환 |   React, SocketIO   |
 | 조항범 |   Python, socket module   |
